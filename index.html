@@ -5,6 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f4f6fa" />
     <title>Meridian Banking</title>
+    <script>
+      (function(){
+        var root = document.documentElement;
+        var theme = null;
+        var segment = null;
+        try {
+          var saved = JSON.parse(localStorage.getItem('meridian-preferences'));
+          theme = saved &&saved.state.theme;
+          segment = saved && saved.state.segment;
+        } catch (e) {
+
+        }
+        // if no existing preference
+        if(theme !=='light' && theme !=='dark'){
+          var prefersDark=matchMedia('(prefers-color-scheme:dark)').matches
+          theme = prefersDark ? 'dark' : 'light';
+        }
+        root.dataset.theme = theme; //<html data-theme='dark'
+        //retail default set in segmentswitch
+        if(segment === 'retail' || segment === 'premium'){
+          root.dataset.segment = segment; //<html data-segment=...
+        }
+
+      })()
+
+    </script>
+
   </head>
   <body>
     <div id="root"></div>
