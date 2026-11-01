@@ -11,18 +11,21 @@
         var theme = null;
         var segment = null;
         try {
-          theme = localStorage.getItem('meridian-theme');
-          segment = localStorage.getItem('meridian-segment');
+          var saved = JSON.parse(localStorage.getItem('meridian-preferences'));
+          theme = saved &&saved.state.theme;
+          segment = saved && saved.state.segment;
         } catch (e) {
-          console.error(e);
+
         }
+        // if no existing preference
         if(theme !=='light' && theme !=='dark'){
-          var prefersDark=matchMedia('prefers-color-scheme:dark').matches
+          var prefersDark=matchMedia('(prefers-color-scheme:dark)').matches
           theme = prefersDark ? 'dark' : 'light';
         }
         root.dataset.theme = theme; //<html data-theme='dark'
+        //retail default set in segmentswitch
         if(segment === 'retail' || segment === 'premium'){
-          root.dataset.segment = segment; //<html data-segment='premium'
+          root.dataset.segment = segment; //<html data-segment=...
         }
 
       })()
