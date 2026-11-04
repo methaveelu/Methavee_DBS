@@ -24,5 +24,3 @@ export function searchAccounts(transactions: Transaction[], searchTerm: string):
         transaction.description.toLowerCase().includes(term) || transaction.category.toLowerCase().includes(term)
     )
 }
-
-

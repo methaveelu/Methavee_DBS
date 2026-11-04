@@ -17,7 +17,7 @@ import type {
 import { withDemoParams } from './demoParams';
 
 
-const TRANSACTION_LIMIT = 8;
+export const TRANSACTION_LIMIT = 8;
 
 //refer to client.ts 
 interface ApiRequest {
