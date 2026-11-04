@@ -13,24 +13,29 @@ export function Header() {
     <header className="app-header">
       <div className="app-header-inner">
         <div className="logo">
+          <span className="logo-symbol" aria-hidden="true">
+            M
+          </span>
           <span className="logo-mark">
             Meridian
           </span>
         </div>
 
+        {/* Only Overview exists. The others are out of scope (brief §2), so
+            they are shown but can't be used. */}
         <nav aria-label="Main">
           <ul className="nav-list">
             <li>
             <span aria-current="page">Overview</span>
             </li>
             <li>
-            <span aria-current="page">Cards</span>
+            <span aria-disabled="true">Cards</span>
             </li>
             <li>
-            <span aria-current="page">Payments</span>
+            <span aria-disabled="true">Payments</span>
             </li>
             <li>
-            <span aria-current="page">Insights</span>
+            <span aria-disabled="true">Insights</span>
             </li>
           </ul>
         </nav>

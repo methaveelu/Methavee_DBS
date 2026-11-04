@@ -11,7 +11,7 @@ const ACCOUNT_COUNT = 3
 
 export const DashboardSkeleton = () => {
     return (
-        <div className='dashboard-layout' aria-busy='true'>
+        <div className='dashboard' aria-busy='true'>
             <p role='status' className='visually-hidden'>
                 Loading your dashboard…
             </p>
@@ -23,13 +23,19 @@ export const DashboardSkeleton = () => {
                 </h1>
 
                 {/* Total available: needs the accounts */}
-                <section className='balance-hero'>
-                    <p className='balance-label'>Total available</p>
-                    <p className='balance-total'>
-                        <Skeleton width='9ch' />
-                    </p>
-                    <p className='balance-caption'>Across 2 deposit accounts</p>
-                    <Skeleton width='9rem' height='var(--tap-target)' />
+                <section className='hero'>
+                    <div>
+                        <p className='hero-label'>Total available</p>
+                        <p className='hero-amount'>
+                            <Skeleton width='9ch' />
+                        </p>
+                        <p className='hero-caption'>Across 2 deposit accounts</p>
+                    </div>
+                    {/* Stands in for New transfer. Hidden on phones, where
+                        the real button is fixed to the bottom of the screen. */}
+                    <div className='new-transfer-placeholder'>
+                        <Skeleton width='9rem' height='var(--tap-target)' />
+                    </div>
                 </section>
 
                 {/* Account cards: needs the accounts */}
@@ -69,9 +75,9 @@ export const DashboardSkeleton = () => {
                                         <Skeleton width='12ch' />
                                     </p>
                                 </div>
-                                <p className='transaction-amount'>
+                                <div className='transaction-side'>
                                     <Skeleton width='9ch' />
-                                </p>
+                                </div>
                             </li>
                         ))}
                     </ul>
@@ -82,9 +88,10 @@ export const DashboardSkeleton = () => {
             <aside className='dashboard-rail' aria-hidden='true'>
                 <section className='card daily-limit'>
                     <h2 className='section-title'>Daily limit</h2>
-                    <p className='daily-limit-remaining'>
+                    <p className='daily-limit-amount'>
                         <Skeleton width='18ch' />
                     </p>
+                    <Skeleton height='var(--space-2)' />
                     <p className='daily-limit-note'>
                         Resets daily. Applies to all transfers.
                     </p>
