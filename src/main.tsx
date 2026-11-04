@@ -1,8 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from './App'
 import './index.css'
+import { Provider}  from 'react-redux'
+import { setupListeners } from '@reduxjs/toolkit/query/react'
+import { makeStore } from './store'
 
 async function enableMocking() {
   const { worker } = await import('./mocks/browser')
@@ -33,17 +35,16 @@ async function bootstrap() {
     )
   }
 
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { staleTime: 30_000, retry: 1 },
-    },
-  })
+   // Creates the Redux store, which holds the RTK Query cache.
+  const store = makeStore()
+  // Lets refetchOnFocus and refetchOnReconnect hear the browser's events.
+  setupListeners(store.dispatch)
 
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
+      <Provider store={store}>
+          <App />
+      </Provider>
     </StrictMode>,
   )
 }

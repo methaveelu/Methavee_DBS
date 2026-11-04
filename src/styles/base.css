@@ -157,8 +157,11 @@ textarea {
   padding: var(--space-4) 0;
 }
 
+/* inline-block so a skeleton inside a heading or paragraph keeps that line's
+   height, and the layout doesn't jump when the real text replaces it. */
 .skeleton {
-  display: block;
+  display: inline-block;
+  vertical-align: middle;
   height: 1em;
   max-width: 100%;
   border-radius: var(--radius-sm);
