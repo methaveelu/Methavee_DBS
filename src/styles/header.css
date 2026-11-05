@@ -130,6 +130,15 @@
   height: var(--space-5);
 }
 
+/* The sun icon (shown in light mode) is drawn as lines, which only appear
+   when stroked. The moon is a filled shape and stays as it is. */
+.app-header .icon-button[aria-pressed='false'] svg path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
 .avatar {
   display: inline-grid;
   place-items: center;
@@ -157,7 +166,9 @@
     gap: var(--space-3);
   }
 
+  /* Back in its wireframe place: before the theme toggle and avatar. */
   .segment-switch {
+    order: 0;
     flex-basis: auto;
   }
 }

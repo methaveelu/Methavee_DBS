@@ -61,6 +61,21 @@ textarea {
   white-space: nowrap;
 }
 
+/* Page container under the header. On phones the bottom padding leaves room
+   for the New transfer button fixed to the bottom of the screen (D8). */
+.page {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: var(--space-6) var(--gutter-mobile)
+    calc(var(--tap-target) + var(--space-12) + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 640px) {
+  .page {
+    padding: var(--space-8) var(--gutter) var(--space-16);
+  }
+}
+
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -81,8 +96,17 @@ textarea {
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   font-weight: var(--weight-semibold);
+  white-space: nowrap;
   cursor: pointer;
-  transition: background-color var(--duration-fast) var(--ease-out);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+/* A 1px push on press, so a click feels registered. */
+.button:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .button:disabled {
@@ -118,6 +142,11 @@ textarea {
   border-radius: var(--radius-full);
   background: transparent;
   cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.icon-button:hover:not(:disabled) {
+  background: var(--surface-muted);
 }
 
 .icon-button:disabled {
@@ -132,7 +161,12 @@ textarea {
   color: var(--text);
   font-weight: var(--weight-semibold);
   text-decoration: underline;
+  text-underline-offset: 0.2em;
   cursor: pointer;
+}
+
+.link-button:hover {
+  color: var(--brand);
 }
 
 .search input,
@@ -144,6 +178,23 @@ textarea {
   background: var(--surface);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.search {
+  display: block;
+}
+
+.search input:hover,
+.field input:hover,
+.field select:hover {
+  border-color: var(--text-subtle);
+}
+
+.search input:focus-visible,
+.field input:focus-visible,
+.field select:focus-visible {
+  border-color: var(--focus-ring);
 }
 
 .search input::placeholder {

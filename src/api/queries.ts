@@ -28,9 +28,20 @@ interface ApiRequest {
 //follow jsonError to handle errors
 interface ApiFailure {
   status: number,
-  code: string,
+  message: string,
   fields?: Record<string, string>
   meta?: Record<string, unknown>
+}
+
+export function isApiFailure(error: unknown): error is ApiFailure {
+  return typeof error === 'object' && error !== null && 'status' in error
+}
+
+export function toFailure(error: unknown): ApiFailure {
+  if (error instanceof ApiError) {
+    return { status: error.status, message: error.message, fields: error.fields }
+  }
+  return { status: 0, message: 'No response from the server.' }
 }
 
 // retry return unknown type, so we need to cast it to the correct type
@@ -42,7 +53,7 @@ const apiBaseQuery : BaseQueryFn<ApiRequest, unknown, ApiFailure> = async ({path
             return {
                 error : {
                     status: error.status,
-                    code: error.code,
+                    message: error.message,
                     fields: error.fields,
                     meta: error.meta,
                 }
@@ -51,7 +62,7 @@ const apiBaseQuery : BaseQueryFn<ApiRequest, unknown, ApiFailure> = async ({path
         return {
                 error : {
                     status: 0,
-                    code: 'NO response from server'
+                    message: 'No response from server'
                 }
             }
     }

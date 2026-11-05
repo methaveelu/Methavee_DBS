@@ -1,7 +1,8 @@
-import {usePreferences} from './usePreferences';
+import {themeOnScreen, usePreferences} from './usePreferences';
 
 export const ThemeToggle = ()=>{
-    const isDark = usePreferences((state)=>state.theme === 'dark');
+    // Before the first press there's no saved choice, so show what's on screen.
+    const isDark = usePreferences((state)=>(state.theme ?? themeOnScreen()) === 'dark');
     const toggle = usePreferences((state)=>state.toggleTheme);
 
     return(

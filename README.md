@@ -1,135 +1,63 @@
-# Meridian Banking — Frontend Take-Home
+# Meridian Banking - Methavee
 
-Build a small banking app for one customer: a **dashboard** that shows her
-accounts and recent transactions, and a **three-step transfer** that sends money
-to a payee.
-
-You get a working React + TypeScript starter with a mock API already wired in,
-plus design tokens and a wireframe. You don't need a backend, and you don't need
-to invent data.
-
-|  |  |
-| --- | --- |
-| **Time** | Submit within **2 weeks** of receiving this. Most people need about **8–12 hours**; you don't need to use the full two weeks. |
-| **AI tools** | Allowed. In the follow-up call you explain your code and change it live, **without AI help**. See [How we assess](#4-how-we-assess). |
-| **Stack** | React 19, TypeScript, Vite, TanStack Query, React Hook Form, Zod, MSW, Vitest (all installed). Node 22. |
-
----
-
-## 1. Get started
-
-1. Open **https://github.com/Harmonice-Mundi/2026-fe-assignment/generate**
-   (or press **Use this template** → **Create a new repository**). Choose your
-   own account as the owner, keep it **Public**, and click **Create
-   repository**.
-2. Clone your copy and run:
-
-   ```bash
-   npm install
-   npm run dev        # http://localhost:5173
-   ```
-
-   You should see **"Mock API: connected"**. That screen is a placeholder;
-   replace it with your app.
-
-3. Read the docs below in order before writing code.
-
-## 2. What to read
-
-| Read | What it gives you |
-| --- | --- |
-| 1. [`brief/candidate-brief.md`](brief/candidate-brief.md) | **The spec.** What to build, what's required vs optional, exact copy. |
-| 2. [`wireframes/wireframe.md`](wireframes/wireframe.md) | Layout of each screen (low fidelity — no visual design). |
-| 3. [`brief/api-contract.md`](brief/api-contract.md) | Endpoints, types, errors, and test hooks. |
-
-Look these up when you need them:
-
-- [`DEPLOYMENT.md`](DEPLOYMENT.md): hosting settings and fixes for common mock-API
-  problems.
-- [`brief/design-tokens.css`](brief/design-tokens.css): colours, spacing and type
-  (already imported).
-- [`mock-api/README.md`](mock-api/README.md): the optional Node mock server.
-
-## 3. What's already in the starter
-
-| Path | What it is |
-| --- | --- |
-| `src/api/client.ts`, `src/api/types.ts` | Typed `apiFetch` helper and the API types. Build your queries on these. |
-| `src/lib/format.ts` | `formatMoney` and `formatShortDate`. Use them so amounts and dates match the brief. |
-| `src/mocks/`, `mock-api/` | The mock API. It runs in the browser, in tests, and in your deployed site. **Don't edit it.** |
-| `src/test/setup.ts` | Test setup. The mock data resets before every test. |
-| `src/App.tsx` | Placeholder screen. Replace it. |
-
-How you structure folders, components and features is **up to you** — that's
-part of what we look at.
-
-```bash
-npm run dev        # start the app
-npm test           # run tests once (npm run test:watch to keep watching)
-npm run lint       # ESLint
-npm run typecheck  # TypeScript
-npm run check      # lint + typecheck + tests
-npm run build      # production build into dist/
-```
-
-Run `npm run check` and `npm run build` before you submit; both should pass.
-
-## 4. How we assess
-
-1. **We open your deployed app** and run through the flows in the brief.
-2. **We read your code and README.** We look at how you structured the
-   project, the decisions you made, and whether the tests check real behaviour.
-3. **We have a follow-up call with you (about 45 minutes).** You share your
-   screen and:
-   - walk us through the structure and two or three decisions you made;
-   - trace one flow through the code (for example, what happens from
-     `Confirm transfer` until the balance updates);
-   - make **one or two small changes live**, without AI assistance. They are
-     the size of "add a validation rule" or "show one more field". Your
-     normal editor, docs and search are fine.
-
-**On AI:** use whatever tools you like while building. We are not checking
-whether code was AI-generated. We are checking that **you understand all of
-it** and made deliberate choices. If you can't explain a piece of code, it
-counts against you, whoever wrote it. Your README must say what you used AI
-for (see below).
-
-A smaller app you understand well scores better than a bigger one you can't
-explain.
-
-## 5. Submit
-
-1. **Deploy** to Netlify, Vercel or Cloudflare Pages (settings in
-   [`DEPLOYMENT.md`](DEPLOYMENT.md)). The deployed site must work with no local
-   server.
-2. **Replace this README** with your own, using the outline below.
-3. **Reply to the invitation email** with your repo URL and your deployed URL.
-
-### Your README
-
-```md
-# Meridian Banking — <Your Name>
-
-- Deployed: <url>
+- Deployed: https://methavee-dbs.pages.dev
 - Run locally: `npm install && npm run dev`
 
 ## Project structure
-Folders and what each is responsible for.
+
+```
+src/
+  api/          typed fetch client, types, RTK Query endpoints, demo URL params
+  components/   shared UI (Skeleton)
+  features/     dashboard/, headers/, theme/, transfer/ - each owns its components, hooks and tests
+  lib/          money/date formatting, selectors (totals and limits, in cents)
+  styles/       base, header, dashboard, transfer CSS (design tokens only)
+  test/         test setup and render helper
+```
 
 ## Decisions and trade-offs
-Server state vs UI state, forms and validation, theming, anything you
-chose deliberately, and what you'd change.
+
+- **RTK Query instead of the starter's TanStack Query.** I know it well enough to explain and change it live. It handles caching, loading/error states and refetching (E2). Totals and the remaining limit are worked out each render, never stored.
+- **Zustand for theme and segment.** Two preferences that must survive a reload, and `persist` saves them in one line. The theme is only saved once the user presses the toggle, so until then the app follows the system setting. A script in `index.html` applies both before the first paint.
+- **Search filters the 8 loaded rows in the browser.** It's instant, with no requests and no loading state. Trade-off: older transactions can't be found.
+- **After a transfer, refetch, then show success.** Customer, accounts and transactions are refetched before "Transfer sent" appears. The server stays the only source of truth, and the dashboard is already correct when success shows (wireframe §6). Cost: about 0.5 s longer before the success screen.
+- **One form for all three steps, one Zod schema.** `Back` keeps everything entered. Each rule is defined once, in a schema built from the live balance and limit. `Continue` checks only the current step and focuses the first error.
+- **No double sends.** The button is disabled while sending, and a ref blocks fast repeat clicks. `Esc` and `✕` are blocked mid-send. There's a short click pause after each step, so a double click can't skip the review.
+- **Native `<dialog>`** gives focus handling and `Esc` with no library. It becomes a full-screen sheet below 1024 px.
+- **Demo states come from URL params instead of a debug menu,** so there's no "break the app" control in the UI.
 
 ## Loading, empty and error states
-How you handled them, and how to see each one in the deployed app.
+
+| State | How to see it on the deployed site |
+| --- | --- |
+| Loading skeleton | `?delay=3000` |
+| Dashboard error + `Retry` | `?scenario=error` |
+| Empty lists | `?scenario=empty` |
+| No search matches | search for `zzz` |
+| Field errors | `Continue` with empty fields, or an amount over the balance |
+| Failed transfer, data kept | put `#fail` in the note |
 
 ## Tests
-What they cover and why you picked those cases.
+
+45 tests (`npm test`). The three required ones, each with its edge cases:
+
+1. **Amount over balance** (`TransferDialog.test.tsx`): 1 cent over shows the error on the field and sends no request. Exactly the balance is accepted.
+2. **Successful transfer** (same file): `Sending…`, then success with the reference, one request with the right body, and the dashboard balance, total, transactions and limit all updated. A `#fail` note keeps the user on review and moves no money.
+3. **Dashboard error and `Retry`** (`Dashboard.test.tsx`): covered for each of the three requests, plus a retry that fails again.
+
+They test through the real UI and the mock API, at the points where a bug costs money or trust. I broke each feature on purpose to confirm its test fails. Other tests cover the demo URL params and the theme store.
 
 ## AI use
-Which tools, and what for. Name two or three places where you changed,
-rejected or fixed what the AI produced, and why.
+
+I used **Claude Code** for planning, code, tests, CSS and review. Places where I changed or rejected its output:
+
+1. **RTK Query over TanStack Query.** Its plan used the starter's TanStack Query. I switched to RTK Query, which I am more familiar with.
+2. **A vague build plan.** Its steps didn't say why (for example, "disabled nav links"). I had it rewritten as plain tasks with reasons.
+3. **Refetching before success.** It suggested invalidating the queries, which refreshes the dashboard after the success screen. I kept a refetch that finishes first.
 
 ## Not done / known issues
-What you left out or would do with more time.
-```
+
+- `Retry` shows no loading feedback; the error stays until the response arrives.
+- Not checked on a real phone, only at 360 and 390 px in a desktop browser.
+- Focus returning to `New transfer` relies on the native dialog and isn't covered by tests.
+- Skipped optional extras: discard confirmation, balance hiding, `#transfer` link, an end-to-end test, CI. The daily-limit progress bar is built.

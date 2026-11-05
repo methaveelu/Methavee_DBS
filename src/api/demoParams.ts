@@ -16,6 +16,5 @@ export function withDemoParams(
         if(value) apiParams.set(param, value);
     }
     const search = apiParams.toString(); 
-    console.log('search_param_test', search)
     return search? `${pathname}?${search}`: pathname;
 }
